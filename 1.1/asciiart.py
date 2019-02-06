@@ -98,7 +98,8 @@ def imagesToMovie(fileList, videoname):
 	#cv2.destroyAllWindows()
 	video.release()
 
-	video = cv2.VideoWriter("grayvid_" + videoname, cv2.VideoWriter_fourcc('M','J','P','G'),30,(width, height),False)
+	#Change to an 8bit codec
+	video = cv2.VideoWriter("grayvid_" + videoname, cv2.VideoWriter_fourcc('8','B','P','S'),30,(width, height))
 	for f in fileList:
 		frame = cv2.imread(f)
 		video.write(frame)
@@ -121,17 +122,19 @@ def contrastAdjustUp(value, percent):
 
 
 def main():
-	horiMultiplyer = 6.09375
-	vertMultiplyer = 12.90
+	#horiMultiplyer = 6.09375
+	#vertMultiplyer = 12.90
+	horiMultiplyer = 10
+	vertMultiplyer = 18
 	asciiFileNames = []
 
 	fileNames = videoToFrames_Grey("TEST.MOV")
 
 	#sort out pixel size here
-	x = imgToAscii("cookie.jpg")
-	print(x)
-	stringToImage(x, 1620,1800, "x.jpg")   #calc new pix width
-	input("pause")
+	#x = imgToAscii("cookie.jpg")
+	#print(x)
+	#stringToImage(x, 1620,1800, "x.jpg")   #calc new pix width
+	#input("pause")
 	#********************************************************
 
 	for n in fileNames:
