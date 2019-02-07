@@ -3,7 +3,10 @@ import cv2
 import os
 
 #NOTES:
-# - Make text and frames bigger to try and help quality - Will have to recalc char pix size
+# - Make text and frames bigger to try and help quality - Will have to recalc char pix size - done
+# - Dynamically figure out FPS and pass to video maker
+# - strip audio and overlay it
+
 
 def imgToAscii(imgFile):
 	divisor = 3.642857142857143 #255 shades of grey per pixel.  Div by this to assign 255 shades to one ASCII character
