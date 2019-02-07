@@ -88,10 +88,11 @@ def stringToImage(imgText, width, height, imgName):
 
 def imagesToMovie(fileList, videoname):
 	#videoname = "AsciiFilms.avi"
+	frameRate = 24
 	frame = cv2.imread(fileList[0])
 	height, width, layers = frame.shape
 
-	video = cv2.VideoWriter("mjpg_" + videoname, cv2.VideoWriter_fourcc('M','J','P','G'),24,(width, height))
+	video = cv2.VideoWriter("mjpg_" + videoname, cv2.VideoWriter_fourcc('M','J','P','G'),frameRate,(width, height))
 	#video = cv2.VideoWriter("2" + videoname, 0,30,(width, height),0)
 	#video = cv2.VideoWriter(filename=videoname, fps=30, frameSize=(width, height))
 
@@ -102,7 +103,7 @@ def imagesToMovie(fileList, videoname):
 	video.release()
 
 	#Change to an 8bit codec
-	video = cv2.VideoWriter("h264_" + videoname, cv2.VideoWriter_fourcc('H','2','6','4'),24,(width, height))
+	video = cv2.VideoWriter("h264_" + videoname, cv2.VideoWriter_fourcc('H','2','6','4'),frameRate,(width, height))
 	for f in fileList:
 		frame = cv2.imread(f)
 		video.write(frame)
