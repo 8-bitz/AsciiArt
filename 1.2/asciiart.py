@@ -1,6 +1,7 @@
 from  PIL import Image, ImageDraw, ImageFont
 import cv2
 import os
+import subprocess
 
 sourceFPS = 0
 brightnessAdjustment = -5
@@ -97,11 +98,11 @@ def stringToImage(imgText, width, height, imgName):
 def imagesToMovie(fileList, videoname):
 	#videoname = "AsciiFilms.avi"
 	global sourceFPS
-	frameRate = sourceFPS	
+	frameRate = sourceFPS
 	frame = cv2.imread(fileList[0])
 	height, width, layers = frame.shape
 
-	video = cv2.VideoWriter("mjpg_" + videoname, cv2.VideoWriter_fourcc('M','J','P','G'),frameRate,(width, height))
+	video = cv2.VideoWriter(videoname, cv2.VideoWriter_fourcc('M','J','P','G'),frameRate,(width, height))
 	#video = cv2.VideoWriter("2" + videoname, 0,30,(width, height),0)
 	#video = cv2.VideoWriter(filename=videoname, fps=30, frameSize=(width, height))
 
@@ -135,6 +136,17 @@ def brightnessAdjust(value, percent):
 		newValue = 0
 	return newValue
 
+def transferAudioBetweenVideos(vidSrc, vidDst):
+	#ffmpeg -i test.mov -ab 160k -ac 2 -ar 44100 -vn audio.wav
+	#ffmpeg -i mjpg_asciiVideo.avi -i audio.wav -codec copy -shortest output.avi
+
+	audioFileName = "srcAudio.wav"
+	p = subprocess.Popen(["ffmpeg", "-i", vidSrc, "-ab", "160k", "-ac", "2", "-ar", "44100", "-vn", audioFileName], stdout=subprocess.PIPE)
+	print (p.communicate())
+
+	p = subprocess.Popen(["ffmpeg", "-i", vidDst, "-i", audioFileName, "-codec", "copy", "-shortest", ("audio_" + vidDst)], stdout=subprocess.PIPE)
+	print (p.communicate())
+
 
 def main():
 	#horiMultiplyer = 6.09375
@@ -163,6 +175,8 @@ def main():
 		os.remove(n)
 
 	imagesToMovie(asciiFileNames, "asciiVideo.avi")
+	transferAudioBetweenVideos("TEST.MOV","asciiVideo.avi")
+
 
 	for n in asciiFileNames:
 		os.remove(n)
@@ -170,4 +184,3 @@ def main():
 
 if __name__ == "__main__":
 	main()
-
