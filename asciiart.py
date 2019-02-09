@@ -33,19 +33,19 @@ def imgToAscii(imgFile):
 	gImg = img.convert("L")														#Convert image to greyscaleChars
 	size = gImg.size															#Get the size
 	shrinkRatio = size[0] / maxWidth											#Get the ratio to shring by to make it the max Width
-	gImg = gImg.resize((int(size[0]/shrinkRatio) ,int(size[1]/shrinkRatio)))	#Resize the image	
+	gImg = gImg.resize((int(size[0]/shrinkRatio) ,int(size[1]/shrinkRatio)))	#Resize the image
 	size = gImg.size															#get new size of the image
 	for y in range (0,size[1]):													#For ever row.  0,0 is the top left.
 		for x in range (0,size[0]):												#For every column
-			pix = gImg.getpixel((x,y))											#Get the pixel shade (0 - 255)			
-			pix = brightnessAdjust(pix, brightnessAdjustment)					#adjust the brightness of the individual pixel			
+			pix = gImg.getpixel((x,y))											#Get the pixel shade (0 - 255)
+			pix = brightnessAdjust(pix, brightnessAdjustment)					#adjust the brightness of the individual pixel
 			pix = int(pix / divisor)											#assign pixel shade to an ascii character
 			asciiArt = 	asciiArt + greyscaleChars[str(pix)]						#Create the output string
 		asciiArt = 	asciiArt + "\n "											#new line after all columns in the row are completed
 	return asciiArt																#return final image
 
-	
-def videoToFrames_Grey(vidFile):											
+
+def videoToFrames_Grey(vidFile):
 	fileList = []																#init empty list to store file names and track order
 	maxWidth = 160																#specify max width of resized frames
 	global sourceFPS															#access global variable storing video FPS
@@ -72,19 +72,20 @@ def stringToImage(imgText, width, height, imgName):
 	draw.multiline_text((0, 0), str(imgText), fill=(255), font=font, align="center")	#add the text to the image
 	img.save(imgName)																	#save the image
 
-def imagesToMovie(fileList, videoname):									
+def imagesToMovie(fileList, videoname):
 	global sourceFPS																							#access the global sourceFPS variable
 	frameRate = sourceFPS																						#set the framerate variable
 	frame = cv2.imread(fileList[0])																				#read the first frame from the file list
 	height, width, layers = frame.shape																			#get the image dimensions
-
+	#height = int(height/2)					#are these breaking the video?
+	#width = int(width/2)
 	video = cv2.VideoWriter(videoname, cv2.VideoWriter_fourcc('M','J','P','G'),frameRate,(width, height))		#create a new video encoded with MJPG
 
 	for f in fileList:																							#for every image in the file list
 		frame = cv2.imread(f)																					#read the frame
-		video.write(frame)																						#write the frame to the video	
+		video.write(frame)																						#write the frame to the video
 	video.release()																								#save the video
-	
+
 
 def brightnessAdjust(value, percent):
 	max = 255												#max pixel brightness
@@ -105,13 +106,13 @@ def transferAudioBetweenVideos(vidSrc, vidDst):
 
 	p = subprocess.Popen(["ffmpeg", "-i", vidDst, "-i", audioFileName, "-codec", "copy", "-shortest", ("audio_" + vidDst)], stdout=subprocess.PIPE)		#overlay new audio file on video to temp video file
 	print (p.communicate())																																#print output
-	
+
 	os.remove(vidDst)																																	#remove video with no audio
 	os.remove(audioFileName)																															#remove temp audio file
 	os.rename(("audio_" + vidDst), vidDst)																												#rename the temp video with audio
 
 
-def main():	
+def main():
 	horiMultiplyer = 10														#pixel width for a single character
 	vertMultiplyer = 18														#pixel height for a single character
 	asciiFileNames = []														#list of images converted to ascii
@@ -132,7 +133,7 @@ def main():
 	transferAudioBetweenVideos("TEST.MOV","asciiVideo.avi")					#transfer audio from source movie to ascii movie
 
 	for n in asciiFileNames:												#cleanup ascii images
-		os.remove(n)														#remove the file 
+		os.remove(n)														#remove the file
 
 
 if __name__ == "__main__":
