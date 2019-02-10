@@ -4,6 +4,7 @@ import cv2
 import subprocess
 
 #BUILD FUNCTION TO SHRINK FRAMES BEFORE MOVIE GENERATION
+#TAKES TOO MUCH MEMORY.....CREATE FRAMES and DATA ON THE FLY... DONT SAVE TO LIST
 sampleString = "asdfgh[],/porut"
 
 horiMultiplyer = 10														#pixel width for a single character
