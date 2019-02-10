@@ -52,39 +52,43 @@ def generateFrameConversionData(imgPath):
         pixColour = (0,0,0)
         imgData.append((asciiChar,pixColour))
     print("Conversion data generated:\t" + imgPath)
-    return (imgData)
+    return (generateColourAsciiFrame(imgData,"a_"+imgPath))
 
 def generateColourAsciiFrame(data, newFileName):
-    global horiMultiplyer
-    global vertMultiplyer
-    x = 0
-    y = 0
-    stringData = ""
-    stringList = []
-    for s in data:
-        s, _ = s
-        stringData = stringData + s
-    stringList = stringData.split("\n")
-    horChars = len(stringList[0])
-    vertChars = len(stringList)- 1
-    imgHeight =vertChars * vertMultiplyer
-    imgWidth = horChars * horiMultiplyer
+	global horiMultiplyer
+	global vertMultiplyer
+	x = 0
+	y = 0
+	stringData = ""
+	stringList = []
+	for s in data:
+		s, _ = s
+		stringData = stringData + s
+		stringList = stringData.split("\n")
+	horChars = len(stringList[0])
+	vertChars = len(stringList)- 1
+	imgHeight =vertChars * vertMultiplyer
+	imgWidth = horChars * horiMultiplyer
     #print("Row Length:\t" +  str(len(stringList[0])))
     #print("Total Rows:\t" + str(len(stringList)- 1))
-    img = Image.new("RGB", (imgWidth, imgHeight))
-    draw = ImageDraw.Draw(img)															#crete a draw object
-    font = ImageFont.truetype("cour.ttf", 16)
-    for d in data:
-        pix, col = d
-        if pix == "\n":
-            y = y + vertMultiplyer
-            x = 0
-        else:
-            draw.text((x, y), str(pix), fill=col, font=font, align="left")
-            x = x + horiMultiplyer
-    img.save(newFileName)
-    print("Ascii Frame Generated:\t" + newFileName)
-    return(newFileName)
+	img = Image.new("RGB", (imgWidth, imgHeight))
+	draw = ImageDraw.Draw(img)															#crete a draw object
+	#font = ImageFont.truetype("cour.ttf", 16)
+	font = ImageFont.truetype("Courier-BoldRegular.ttf", 16)
+	for d in data:
+		pix, col = d
+		if pix == "\n":
+			y = y + vertMultiplyer
+			x = 0
+		else:
+			draw.text((x, y), str(pix), fill=col, font=font, align="left")
+			x = x + horiMultiplyer
+	newWidth = int(imgWidth * 0.75)
+	newHeight = int(imgHeight * 0.75)
+	img = img.resize((newWidth,newHeight))
+	img.save(newFileName)
+	print("\tAscii Frame Generated:\t" + newFileName)
+	return(newFileName)
 
 def videoToFrames(vidFile):
 	fileList = []																#init empty list to store file names and track order
@@ -107,16 +111,16 @@ def videoToFrames(vidFile):
 	return(fileList)
 
 def imagesToMovie(fileList, videoname):
-	global sourceFPS																							#access the global sourceFPS variable
-	frameRate = sourceFPS																						#set the framerate variable
-	frame = cv2.imread(fileList[0])																				#read the first frame from the file list
-	height, width, layers = frame.shape																			#get the image dimensions
-	video = cv2.VideoWriter(videoname, cv2.VideoWriter_fourcc('M','J','P','G'),frameRate,(width, height))		#create a new video encoded with MJPG
-
-	for f in fileList:																							#for every image in the file list
-		frame = cv2.imread(f)																					#read the frame
-		video.write(frame)																						#write the frame to the video
-	video.release()
+    global sourceFPS
+    frameRate = sourceFPS
+    frame = cv2.imread(fileList[0])
+    height, width, layers = frame.shape
+    video = cv2.VideoWriter(videoname, cv2.VideoWriter_fourcc('M','J','P','G'),frameRate,(width, height))
+    for f in fileList:
+        frame = cv2.imread(f)
+        video.write(frame)
+        print(f + " Written to video")
+    video.release()
 
 def transferAudioBetweenVideos(vidSrc, vidDst):
 	audioFileName = "srcAudio.wav"																														#file name for audio export
@@ -149,31 +153,35 @@ def transferAudioBetweenVideos(vidSrc, vidDst):
 
 #img.save("x.jpg")
 
-imgPath = "cookie.jpg"
-vidContent = []
-newFrames = []
+#imgPath = "cookie.jpg"
+vidContent = []     #list of file names ASCII content
+newFrames = []      #may not be required anymore
+
+srcVideo = input("Enter name of source video:\t")
+dstVideo = input("Enter name for new ascii video:\t")
 
 #Convert video to frames
-srcFrames = videoToFrames("TEST.MOV")
+srcFrames = videoToFrames(srcVideo)
 
 #For each frame, generate the conversion data
 for frame in srcFrames:
     vidContent.append(generateFrameConversionData(frame))
 
 #Generate all teh ascii frames and put file names into a list
-counter = 0
-for frame in vidContent:
-    newFrames.append(generateColourAsciiFrame(frame, ("asciiFrame" + str(counter) + ".jpg")))
-    counter = counter + 1
-
-imagesToMovie(newFrames, "colourAsciiVid.avi")
-transferAudioBetweenVideos("TEST.MOV","colourAsciiVid.avi")
+#counter = 0
+#for frame in vidContent:
+#    newFrames.append(generateColourAsciiFrame(frame, ("asciiFrame" + str(counter) + ".jpg")))
+#    counter = counter + 1
+print("************************************")
+print("************************************")
+imagesToMovie(vidContent, dstVideo)
+transferAudioBetweenVideos(srcVideo,dstVideo)
 
 #generateColourAsciiFrame(imgData, "x.jpg")
 
 for f in srcFrames:
     os.remove(f)
-for f in newFrames:
+for f in vidContent:
     os.remove(f)
 
 #for d in imgData:
