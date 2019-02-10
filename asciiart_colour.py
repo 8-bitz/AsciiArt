@@ -83,8 +83,8 @@ def generateColourAsciiFrame(data, newFileName):
 		else:
 			draw.text((x, y), str(pix), fill=col, font=font, align="left")
 			x = x + horiMultiplyer
-	newWidth = int(imgWidth * 0.75)
-	newHeight = int(imgHeight * 0.75)
+	newWidth = int(imgWidth * 0.5)
+	newHeight = int(imgHeight * 0.5)
 	img = img.resize((newWidth,newHeight))
 	img.save(newFileName)
 	print("\tAscii Frame Generated:\t" + newFileName)
