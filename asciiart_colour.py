@@ -46,7 +46,7 @@ def generateFrameConversionData(imgPath):
             pixColour = img.getpixel((x,y))
             #pix = brightnessAdjust(pix, brightnessAdjustment)					#adjust the brightness of the individual pixel
             pix = int(pix / divisor)											#assign pixel shade to an ascii character
-            asciiChar = 	greyscaleCharsRev[str(pix)]						#Create the output string
+            asciiChar = 	greyscaleChars[str(pix)]						#Create the output string
             imgData.append((asciiChar,pixColour))
         asciiChar = "\n"
         pixColour = (0,0,0)
