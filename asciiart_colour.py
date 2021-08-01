@@ -72,9 +72,8 @@ def generateColourAsciiFrame(data, newFileName):
     #print("Row Length:\t" +  str(len(stringList[0])))
     #print("Total Rows:\t" + str(len(stringList)- 1))
 	img = Image.new("RGB", (imgWidth, imgHeight))
-	draw = ImageDraw.Draw(img)															#crete a draw object
-	#font = ImageFont.truetype("cour.ttf", 16)
-	font = ImageFont.truetype("Courier-BoldRegular.ttf", 16)
+	draw = ImageDraw.Draw(img)							#crete a draw object
+	font = ImageFont.truetype("courbd.ttf", 16)					#You can also use other monospace fonts: cour.ttf, couri.ttf, courbi.ttf ...
 	for d in data:
 		pix, col = d
 		if pix == "\n":
